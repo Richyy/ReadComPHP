@@ -1,12 +1,132 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <meta charset="UTF-8">
-        <title>{% block title %}Welcome!{% endblock %}</title>
-        {% block stylesheets %}{% endblock %}
-    </head>
-    <body>
-        {% block body %}{% endblock %}
-        {% block javascripts %}{% endblock %}
-    </body>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <title>{% block title %}Welcome!{% endblock %}</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description"
+          content="Now easily manage your user activity using Activity Tracker">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0"/>
+    {% block stylesheets %}
+        <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+        <style>
+            body {
+                display: flex;
+                min-height: 100vh;
+                flex-direction: column;
+            }
+            main {
+                flex: 1 0 auto;
+            }
+            .page-footer {
+                padding-top: 20px;
+                color: #fff;
+                background-color: #607D8B;
+                margin-top: auto;
+            }
+            .light-blue.lighten-1 {
+                background-color: #375fdf !important;
+            }
+            .btn_blue {
+                text-decoration: none;
+                color: #fff;
+                background-color: #326cdc !important;
+                text-align: center;
+                letter-spacing: .5px;
+                -webkit-transition: background-color .2s ease-out;
+                transition: background-color .2s ease-out;
+                cursor: pointer;
+                width: 100%;
+                height: 50px;
+                line-height: 50px;
+                /* font-weight: bold; */
+                font-size: 16px;
+                margin-top: 30px;
+            }
+            a {
+                color: #326cdc;
+                text-decoration: none;
+                -webkit-tap-highlight-color: transparent;
+            }
+            .btn, .btn-large, .btn-small {
+                text-decoration: none;
+                color: #fff;
+                background-color: #326cdc !important;
+                text-align: center;
+                letter-spacing: .5px;
+                -webkit-transition: background-color .2s ease-out;
+                transition: background-color .2s ease-out;
+                cursor: pointer;
+            }
+        </style>
+    {% endblock %}
+</head>
+<body>
+{% block header %}
+    <!--   Nav Section   -->
+    <nav class="light-blue lighten-1" role="navigation">
+    <div class="nav-wrapper container"><a id="logo-container" href="#" class="brand-logo">Logo</a>
+        <ul id="nav-mobile" class="right hide-on-med-and-down">
+            <li><a href="#">Dashboard</a></li>
+            <li><a href="#">Time settings</a></li>
+        </ul>
+        <ul id="nav-mobile" class="sidenav">
+            <li><a href="#">Dashboard</a></li>
+            <li><a href="#">Time settings</a></li>
+        </ul>
+      <a href="#" data-target="nav-mobile" class="sidenav-trigger"><i class="material-icons">menu</i></a>
+    </div>
+  </nav>
+    <!--   Nav Section End  -->
+{% endblock %}
+<div class="container">
+    <div class="section">
+        {% block body %}
+        {% endblock %}
+    </div>
+    <br><br>
+</div>
+{% block footer %}
+    <!--   Footer Section -->
+    <footer class="page-footer">
+    <div class="container">
+      <div class="row">
+        <div class="col l6 s12">
+          <h5 class="white-text">Company</h5>
+        </div>
+        <div class="col l3 s12">
+          <h5 class="white-text">Settings</h5>
+          <ul>
+            <li><a class="white-text" href="#!">Link 1</a></li>
+            <li><a class="white-text" href="#!">Link 2</a></li>
+            <li><a class="white-text" href="#!">Link 3</a></li>
+            <li><a class="white-text" href="#!">Link 4</a></li>
+          </ul>
+        </div>
+        <div class="col l3 s12">
+          <h5 class="white-text">Connect</h5>
+          <ul>
+            <li><a class="white-text" href="#!">Link 1</a></li>
+            <li><a class="white-text" href="#!">Link 2</a></li>
+            <li><a class="white-text" href="#!">Link 3</a></li>
+            <li><a class="white-text" href="#!">Link 4</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </footer>
+{% endblock %}
+{% block javascripts %}
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+    <script>
+        M.AutoInit();
+        // $(document).ready(function(){
+        //     $('.sidenav').sidenav();
+        // });
+    </script>
+{% endblock %}
+</body>
 </html>
