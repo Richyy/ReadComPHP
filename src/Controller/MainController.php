@@ -20,7 +20,7 @@ class MainController extends AbstractController
     public function dashboard()
     {
         $readers = $this->getDoctrine()->getRepository(Reader::class)->findAll();
-
+        $readers = [$readers[0],$readers[1]];
         $data = ['readers'=>$readers];
         $form = $this->createForm(ReaderTimerSettingsType::class,$data);
 
