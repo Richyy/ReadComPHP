@@ -4,6 +4,7 @@ namespace App\Form\Type;
 
 use App\Entity\Reader;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\CallbackTransformer;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -20,8 +21,17 @@ class ReaderType extends AbstractType
                 'max' => 255
             ]])
             ->add('timingPoint',TextType::class,['label'=>'Timing point'])
-            ->add('status',CheckboxType::class, ['label'=>'Enabled?'])
+            ->add('readingStatus',CheckboxType::class, ['label'=>'Enabled?'])
         ;
+        $builder->get('readingStatus')
+            ->addModelTransformer(new CallbackTransformer(
+                function ($value) {
+                    return (bool)$value;
+                },
+                function ($value) {
+                    return (int)$value;
+                }
+            ));
     }
 
     public function configureOptions(OptionsResolver $resolver)

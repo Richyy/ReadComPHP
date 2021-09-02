@@ -1,20 +1,21 @@
 {% extends "base.html.twig" %}
 {% block body %}
     {{ form_start(form) }}
-    {% for reader in form.readers %}
-        Reader {{ loop.index }}
 
-        <div class="row">
+    {% for reader in form.readers %}
+        Reader {{ reader.vars.value.id }}
+
+        <div class="row readerRow" data-id="{{ reader.vars.value.id }}">
             <div class="input-field col l1 s11">
                 {{- form_widget(reader.ip) -}}
                 {{- form_label(reader.ip) -}}
                 {{- form_errors(reader.ip) -}}
             </div>
             <div class="input-field col s1 center-align server-connect">
-                <i id="server-connect-icon{{ loop.index }}" class="server-connect-btn small material-icons red-text"
-                   data-id="{{ loop.index }}">cancel</i>
+                <i id="server-connect-icon{{ reader.vars.value.id }}" class="server-connect-btn small material-icons red-text"
+                   data-id="{{ reader.vars.value.id }}">cancel</i>
                 <div class="preloader-wrapper small active server-connect-progress"
-                     id="server-connect-progress{{ loop.index }}" style="display:none;">
+                     id="server-connect-progress{{ reader.vars.value.id }}" style="display:none;">
                     <div class="spinner-layer spinner-yellow-only">
                         <div class="circle-clipper left">
                             <div class="circle"></div>
@@ -30,10 +31,10 @@
             </div>
 
             <div class="input-field col l1 s6">
-                <input readonly id="read{{ loop.index }}" type="text" value="0">
+                <input readonly id="read{{ reader.vars.value.id }}" type="text" value="0">
             </div>
             <div class="input-field col l1 s6">
-                <input readonly id="lastread{{ loop.index }}" type="text" value="00:00:00">
+                <input readonly id="lastread{{ reader.vars.value.id }}" type="text" value="00:00:00">
             </div>
             <div class="input-field col l4 s12">
                 {{- form_widget(reader.timingPoint) -}}
@@ -45,12 +46,12 @@
                 <div class="switch">
                     <label>
                         Off
-                        {{- form_widget(reader.status) -}}
+                        {{- form_widget(reader.readingStatus) -}}
                         <span class="lever"></span>
                         On
                     </label>
                 </div>
-                {{- form_errors(reader.status) -}}
+                {{- form_errors(reader.readingStatus) -}}
             </div>
         </div>
     {% endfor %}
@@ -59,21 +60,4 @@
 
 {% block title %}
 
-{% endblock %}
-
-{% block javascripts %}
-    {{ parent() }}
-    <script>
-        $('.server-connect-btn').click(function () {
-            var $btn = $(this);
-            var id = $btn.data('id');
-            var $spinner = $('#server-connect-progress' + id)
-            $btn.hide();
-            $spinner.show();
-            setTimeout(function () {
-                $spinner.hide();
-                $btn.html('check_circle').removeClass('red-text').addClass('green-text').show();
-            }, 1500);
-        });
-    </script>
 {% endblock %}

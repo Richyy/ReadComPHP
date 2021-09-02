@@ -2,35 +2,52 @@
 
 namespace App\Entity;
 
-use App\Repository\ReaderRepository;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @ORM\Entity(repositoryClass=ReaderRepository::class)
+ * Reader
+ *
+ * @ORM\Table(name="reader")
+ * @ORM\Entity
  */
 class Reader
 {
     /**
+     * @var int
+     *
+     * @ORM\Column(name="id", type="integer", nullable=false)
      * @ORM\Id
-     * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
+     * @ORM\GeneratedValue(strategy="IDENTITY")
      */
     private $id;
 
     /**
-     * @ORM\Column(type="integer")
+     * @var int
+     *
+     * @ORM\Column(name="ip", type="integer", nullable=false)
      */
     private $ip;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @var string
+     *
+     * @ORM\Column(name="timing_point", type="string", length=255, nullable=false)
      */
     private $timingPoint;
 
     /**
-     * @ORM\Column(type="boolean")
+     * @var int
+     *
+     * @ORM\Column(name="connection_status", type="integer", nullable=false)
      */
-    private $status;
+    private $connectionStatus;
+
+    /**
+     * @var int
+     *
+     * @ORM\Column(name="reading_status", type="integer", nullable=false)
+     */
+    private $readingStatus;
 
     public function getId(): ?int
     {
@@ -61,14 +78,26 @@ class Reader
         return $this;
     }
 
-    public function getStatus(): ?bool
+    public function getConnectionStatus(): ?int
     {
-        return $this->status;
+        return $this->connectionStatus;
     }
 
-    public function setStatus(bool $status): self
+    public function setConnectionStatus(int $connectionStatus): self
     {
-        $this->status = $status;
+        $this->connectionStatus = $connectionStatus;
+
+        return $this;
+    }
+
+    public function getReadingStatus(): ?int
+    {
+        return $this->readingStatus;
+    }
+
+    public function setReadingStatus(int $readingStatus): self
+    {
+        $this->readingStatus = $readingStatus;
 
         return $this;
     }
