@@ -7,6 +7,7 @@ namespace App\Controller;
 use App\Entity\Reader;
 use App\Form\Type\ReaderTimerSettingsType;
 use App\Message\ReadComCommand;
+use App\Tail\PHPTail;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -36,7 +37,12 @@ class MainController extends AbstractController
     public function connectToReader($id)
     {
         $reader = $this->getReader((int)$id);
-        if($reader) {
+        if ($reader) {
+            $entityManager = $this->getDoctrine()->getManager();
+            $reader->setConnectionStatus(Reader::READER_CONNECTING);
+            $entityManager->persist($reader);
+            $entityManager->flush();
+
             $obj = new \stdClass();
             $obj->readerId = $reader->getId();
             $obj->readerIp = $reader->getIp();
@@ -53,7 +59,12 @@ class MainController extends AbstractController
     public function disconnectFromReader($id)
     {
         $reader = $this->getReader((int)$id);
-        if($reader) {
+        if ($reader) {
+            $entityManager = $this->getDoctrine()->getManager();
+            $reader->setConnectionStatus(Reader::READER_DISCONNECTING);
+            $entityManager->persist($reader);
+            $entityManager->flush();
+
             $obj = new \stdClass();
             $obj->readerId = $reader->getId();
             $obj->readerIp = $reader->getIp();
@@ -70,7 +81,7 @@ class MainController extends AbstractController
     public function updateReader($id, Request $request)
     {
         $reader = $this->getReader((int)$id);
-        if($reader) {
+        if ($reader) {
             $changedField = $request->get('change');
             $readerInput = $request->get('reader');
             $entityManager = $this->getDoctrine()->getManager();
@@ -84,6 +95,7 @@ class MainController extends AbstractController
             }
             $entityManager->persist($reader);
             $entityManager->flush();
+
             $obj = new \stdClass();
             $obj->readerId = $reader->getId();
             $obj->readerIp = $reader->getIp();
@@ -95,6 +107,19 @@ class MainController extends AbstractController
         return new JsonResponse(['result' => false]);
     }
 
+    /**
+     * @Route("/logLines", name="getLogLines", options={"expose"=true})
+     */
+    public function getLogLines(Request $request)
+    {
+        return new JsonResponse($this->getPhpTail()->getNewLines($request->get('lastSize')));
+    }
+
+
+    private function getPhpTail()
+    {
+        return new PHPTail($this->getParameter('kernel.logs_dir') . DIRECTORY_SEPARATOR . "csharp.log");
+    }
     /**
      * @param int $id
      * @return Reader|null

@@ -12,6 +12,11 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class Reader
 {
+    public const READER_DISCONNECTED = 0;
+    public const READER_CONNECTING = 1;
+    public const READER_DISCONNECTING = 2;
+    public const READER_CONNECTED = 3;
+
     /**
      * @var int
      *

@@ -3,9 +3,8 @@
     {{ form_start(form) }}
 
     {% for reader in form.readers %}
-        Reader {{ reader.vars.value.id }}
-
-        <div class="row readerRow" data-id="{{ reader.vars.value.id }}">
+        <div class="row readerRow {% if reader.vars.value.ip == 0 %}hide{% endif %}" data-id="{{ reader.vars.value.id }}" >
+            Reader {{ reader.vars.value.id }}
             <div class="input-field col l1 s11">
                 {{- form_widget(reader.ip) -}}
                 {{- form_label(reader.ip) -}}
@@ -13,9 +12,9 @@
             </div>
             <div class="input-field col s1 center-align server-connect">
                 <i id="server-connect-icon{{ reader.vars.value.id }}" class="server-connect-btn small material-icons red-text"
-                   data-id="{{ reader.vars.value.id }}">cancel</i>
+                   data-id="{{ reader.vars.value.id }}" {% if reader.vars.value.connectionStatus == 1 or reader.vars.value.connectionStatus == 2 %}style="display:none;"{% endif %}>cancel</i>
                 <div class="preloader-wrapper small active server-connect-progress"
-                     id="server-connect-progress{{ reader.vars.value.id }}" style="display:none;">
+                     id="server-connect-progress{{ reader.vars.value.id }}" {% if reader.vars.value.connectionStatus == 0 or reader.vars.value.connectionStatus == 3 %}style="display:none;"{% endif %}>
                     <div class="spinner-layer spinner-yellow-only">
                         <div class="circle-clipper left">
                             <div class="circle"></div>
@@ -36,13 +35,13 @@
             <div class="input-field col l1 s6">
                 <input readonly id="lastread{{ reader.vars.value.id }}" type="text" value="00:00:00">
             </div>
-            <div class="input-field col l4 s12">
+            <div class="input-field col l6 s12">
                 {{- form_widget(reader.timingPoint) -}}
                 {{- form_label(reader.timingPoint) -}}
                 {{- form_errors(reader.timingPoint) -}}
             </div>
 
-            <div class="input-field col l4 s12">
+            <div class="input-field col l2 s12">
                 <div class="switch">
                     <label>
                         Off
@@ -53,9 +52,23 @@
                 </div>
                 {{- form_errors(reader.readingStatus) -}}
             </div>
+            <div class="col s12">
+            <a href="#" class="addNextReader">Add next reader</a>
+            </div>
         </div>
     {% endfor %}
     {{ form_end(form) }}
+
+    <div class="row">
+        <div class="col s12">
+            <div class="row">
+                <div class="input-field col s12">
+                    <textarea id="logs" class="materialize-textarea" disabled style="height: 200px; overflow-y: auto;"></textarea>
+                    <label for="logs">LOGS</label>
+                </div>
+            </div>
+        </div>
+    </div>
 {% endblock %}
 
 {% block title %}
@@ -64,7 +77,7 @@
 
 {% block javascripts %}
     {{ parent() }}
-    <script>
+    <script type="text/javascript">
         $( document ).ready(function() {
             var readers = window.readers;
             {% for reader in form.readers -%}
