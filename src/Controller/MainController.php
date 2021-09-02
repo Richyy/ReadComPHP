@@ -35,10 +35,16 @@ class MainController extends AbstractController
      */
     public function connectToReader($id)
     {
-        $obj = new \stdClass();
-        $obj->readerIp = $id;
-        $this->dispatchMessage(new ReadComCommand(ReadComCommand::COMMAND_TYPE_CONNECT, $obj));
-        return new JsonResponse(['result' => true]);
+        $reader = $this->getReader((int)$id);
+        if($reader) {
+            $obj = new \stdClass();
+            $obj->readerId = $reader->getId();
+            $obj->readerIp = $reader->getIp();
+            $obj->timingPoint = $reader->getTimingPoint();
+            $this->dispatchMessage(new ReadComCommand(ReadComCommand::COMMAND_TYPE_CONNECT, $obj));
+            return new JsonResponse(['result' => true]);
+        }
+        return new JsonResponse(['result' => false]);
     }
 
     /**
@@ -46,10 +52,16 @@ class MainController extends AbstractController
      */
     public function disconnectFromReader($id)
     {
-        $obj = new \stdClass();
-        $obj->readerIp = $id;
-        $this->dispatchMessage(new ReadComCommand(ReadComCommand::COMMAND_TYPE_DISCONNECT, $obj));
-        return new JsonResponse(['result' => true]);
+        $reader = $this->getReader((int)$id);
+        if($reader) {
+            $obj = new \stdClass();
+            $obj->readerId = $reader->getId();
+            $obj->readerIp = $reader->getIp();
+            $obj->timingPoint = $reader->getTimingPoint();
+            $this->dispatchMessage(new ReadComCommand(ReadComCommand::COMMAND_TYPE_DISCONNECT, $obj));
+            return new JsonResponse(['result' => true]);
+        }
+        return new JsonResponse(['result' => false]);
     }
 
     /**
@@ -57,9 +69,38 @@ class MainController extends AbstractController
      */
     public function updateReader($id, Request $request)
     {
-        $obj = new \stdClass();
-        $obj->readerIp = $id;
-        $this->dispatchMessage(new ReadComCommand(ReadComCommand::COMMAND_TYPE_DISCONNECT, $obj));
-        return new JsonResponse(['result' => true]);
+        $reader = $this->getReader((int)$id);
+        if($reader) {
+            $changedField = $request->get('change');
+            $readerInput = $request->get('reader');
+            $entityManager = $this->getDoctrine()->getManager();
+            switch ($changedField) {
+                case "ip":
+                    $reader->setIp($readerInput['ip']);
+                    break;
+                case "timingPoint":
+                    $reader->setTimingPoint($readerInput['timingPoint']);
+                    break;
+            }
+            $entityManager->persist($reader);
+            $entityManager->flush();
+            $obj = new \stdClass();
+            $obj->readerId = $reader->getId();
+            $obj->readerIp = $reader->getIp();
+            $obj->changedField = $changedField;
+            $obj->timingPoint = $reader->getTimingPoint();
+            $this->dispatchMessage(new ReadComCommand(ReadComCommand::COMMAND_TYPE_UPDATE, $obj));
+            return new JsonResponse(['result' => true]);
+        }
+        return new JsonResponse(['result' => false]);
+    }
+
+    /**
+     * @param int $id
+     * @return Reader|null
+     */
+    private function getReader(int $id)
+    {
+        return $this->getDoctrine()->getRepository(Reader::class)->find($id);
     }
 }

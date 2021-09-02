@@ -61,3 +61,19 @@
 {% block title %}
 
 {% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        $( document ).ready(function() {
+            var readers = window.readers;
+            {% for reader in form.readers -%}
+            readers[{{ reader.vars.value.id }}].id = {{ reader.vars.value.id }};
+            readers[{{ reader.vars.value.id }}].ip = {{ reader.vars.value.ip }};
+            readers[{{ reader.vars.value.id }}].timingPoint = "{{ reader.vars.value.timingPoint }}";
+            readers[{{ reader.vars.value.id }}].readingStatus = {{ reader.vars.value.readingStatus }};
+            readers[{{ reader.vars.value.id }}].connectionStatus = {{ reader.vars.value.connectionStatus }};
+            {% endfor -%}
+        });
+    </script>
+{% endblock %}

@@ -14,6 +14,7 @@ class ReadComCommand
     const COMMAND_TYPE_START_READING = 3;
     const COMMAND_TYPE_STOP_READING = 4;
     const COMMAND_TYPE_SET_TIME = 5;
+    const COMMAND_TYPE_UPDATE = 6;
 
     public function __construct(int $commandType, \stdClass $data)
     {

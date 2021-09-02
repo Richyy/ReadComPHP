@@ -5,14 +5,15 @@ framework:
 
         transports:
             # https://symfony.com/doc/current/messenger.html#transport-configuration
-            readcom_command:
+            command_queue:
                 dsn: '%env(MESSENGER_TRANSPORT_DSN)%'
                 serializer: messenger.transport.symfony_serializer
                 options:
-                    queue_name: readcom_command
+                    queues:
+                        command_queue: ~
             # failed: 'doctrine://default?queue_name=failed'
             # sync: 'sync://'
 
         routing:
             # Route your messages to the transports
-            'App\Message\ReadComCommand': readcom_command
+            'App\Message\ReadComCommand': command_queue

@@ -1,7 +1,12 @@
 const Routing = window.Routing;
 import Reader from './Reader';
+const READER_DISCONNECTED = 0;
+const READER_CONNECTING = 1;
+const READER_DISCONNECTING = 2;
+const READER_CONNECTED = 3;
 
 let readers = [];
+window.readers = readers;
 $('.readerRow').each(function () {
     var id = $(this).data('id');
     let reader = new Reader();
@@ -18,7 +23,6 @@ $('.readerRow').each(function () {
         reader.readingStatus = this.checked;
         updateReader(reader, 'status');
     });
-    console.log(reader);
     readers[id] = reader;
 });
 
@@ -27,14 +31,27 @@ $('.server-connect-btn').click(function () {
     var $btn = $(this);
     var id = $btn.parents('.readerRow').data('id');
     var $spinner = $('#server-connect-progress' + id)
-    var ip = $('input[name="reader_timer_settings[readers][' + id + '][ip]"]').val();
-    if (ip > 0) {
+    if (readers[id].ip > 0) {
         $btn.hide();
         $spinner.show();
-        $.get(Routing.generate('connect', {id: id, ip: ip}), function (resp) {
-            $spinner.hide();
-            $btn.html('check_circle').removeClass('red-text').addClass('green-text').show();
-        });
+        console.log("teszt1");
+        console.log(readers[id]);
+        if(readers[id].connectionStatus === READER_DISCONNECTED) {
+            readers[id].connectionStatus = READER_CONNECTING;
+            $.get(Routing.generate('connect', {id: id, reader: readers[id]}), function (resp) {
+                readers[id].connectionStatus = READER_CONNECTED;
+                $spinner.hide();
+                $btn.html('check_circle').removeClass('red-text').addClass('green-text').show();
+            });
+        } else if (readers[id].connectionStatus === READER_CONNECTED) {
+            readers[id].connectionStatus = READER_DISCONNECTING;
+            $.get(Routing.generate('disconnect', {id: id, reader: readers[id]}), function (resp) {
+                readers[id].connectionStatus = READER_DISCONNECTED;
+                $spinner.hide();
+                $btn.html('cancel').removeClass('green-text').addClass('red-text').show();
+            });
+        }
+
     }
 });
 
