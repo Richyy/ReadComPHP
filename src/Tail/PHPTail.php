@@ -25,6 +25,9 @@ class PHPTail
     {
         $this->log = $log;
         $this->maxSizeToLoad = $maxSizeToLoad;
+        if (!file_exists($this->log) && is_writeable($this->log)) {
+            file_put_contents($this->log, "");
+        }
     }
 
     /**
@@ -35,6 +38,9 @@ class PHPTail
      */
     public function getNewLines(int $lastFetchedSize = 0, string $grepKeyword = "", bool $invert = false)
     {
+        if (!file_exists($this->log) || !is_readable($this->log)) {
+            return ["size" => -1, "file" => $this->log, "data" => []];
+        }
         /**
          * Clear the stat cache to get the latest results
          */
@@ -75,6 +81,6 @@ class PHPTail
         if (end($data) == "") {
             array_pop($data);
         }
-        return array("size" => $fsize, "file" => $this->log, "data" => $data);
+        return ["size" => $fsize, "file" => $this->log, "data" => $data];
     }
 }
